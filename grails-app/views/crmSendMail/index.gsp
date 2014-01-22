@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="main">
-    <title>Skicka e-post</title>
+    <title><g:message code="crmSendMail.index.title"/></title>
     <r:script>
         var CRM = {
             selectEmailTemplate: function (name, callback) {
@@ -32,12 +32,12 @@
     <div class="row-fluid">
         <div class="span9">
 
-            <crm:header title="Skicka e-post" subtitle="${reference}"/>
+            <crm:header title="crmSendMail.index.title" subtitle="${reference}"/>
 
             <div class="row-fluid">
 
                 <div class="control-group">
-                    <label class="control-label">Från</label>
+                    <label class="control-label"><g:message code="crmSendMail.from.label"/></label>
 
                     <div class="controls">
                         <g:select name="from" from="${senders}" value="${config.from}" class="span11"/>
@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Till</label>
+                    <label class="control-label"><g:message code="crmSendMail.to.label"/></label>
 
                     <div class="controls">
                         <g:textField name="to" value="${config.to}" autocomplete="off" autofocus="" class="span11"/>
@@ -53,15 +53,16 @@
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Ämne</label>
+                    <label class="control-label"><g:message code="crmSendMail.subject.label"/></label>
 
                     <div class="controls">
-                        <g:textField name="subject" value="${config.subject}" autocomplete="off" autofocus="" class="span11"/>
+                        <g:textField name="subject" value="${config.subject}" autocomplete="off" autofocus=""
+                                     class="span11"/>
                     </div>
                 </div>
 
                 <div class="control-group">
-                    <label class="control-label">Meddelande</label>
+                    <label class="control-label"><g:message code="crmSendMail.body.label"/></label>
 
                     <div class="controls">
                         <g:textArea name="body" value="${config.body}" rows="8" class="span11"/>
@@ -70,8 +71,9 @@
             </div>
 
             <div class="form-actions">
-                <crm:button action="index" label="Skicka" visual="success" icon="icon-envelope icon-white"/>
-                <crm:button action="cancel" label="sendMail.button.cancel.label" icon="icon-remove"/>
+                <crm:button action="index" label="crmSendMail.button.send.label" visual="success"
+                            icon="icon-envelope icon-white"/>
+                <crm:button action="cancel" label="crmSendMail.button.cancel.label" icon="icon-remove"/>
             </div>
 
         </div>
@@ -79,9 +81,14 @@
         <div class="span3">
 
             <ul id="template-selector" class="nav nav-list">
-                <li class="nav-header">Mallar</li>
+                <li class="nav-header"><g:message code="crmSendMail.templates.label"/></li>
                 <g:each in="${templates}" var="template">
-                    <li><a href="#" data-name="${template.value.encodeAsHTML()}" title="${template.description?.encodeAsHTML()}">${template.label.encodeAsHTML()}</a></li>
+                    <li>
+                        <a href="#" data-name="${template.value.encodeAsHTML()}"
+                           title="${template.description?.encodeAsHTML()}">
+                            ${template.label.encodeAsHTML()}
+                        </a>
+                    </li>
                 </g:each>
             </ul>
         </div>

@@ -46,7 +46,7 @@ class CrmSendMailController {
             } finally {
                 crmEmailService.removeSendMailConfiguration(request, token)
             }
-            flash.success = message(code: config.sentMessage ?: 'crmEmail.sent.message', args: [params.to])
+            flash.success = message(code: config.sentMessage ?: 'crmSendMail.sent.message', args: [params.to])
             redirect uri: (config.referer - request.contextPath)
         } else {
             def reference = config.reference ? crmCoreService.getReference(config.reference) : null
