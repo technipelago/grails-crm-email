@@ -1,0 +1,13 @@
+# Ignore Intellij IDEA files
+/.idea
+/*.iml
+/cobertura.ser
+
+# Ignore build artifacts
+target
+
+# Ignore packaged plugins
+*.zip
+
+stacktrace.log
+plugin.xml
