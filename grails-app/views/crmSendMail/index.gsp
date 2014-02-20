@@ -52,6 +52,27 @@
                     </div>
                 </div>
 
+                <g:if test="${config.cc != null}">
+                    <div class="control-group">
+                        <label class="control-label"><g:message code="crmSendMail.cc.label"/></label>
+
+                        <div class="controls">
+                            <g:textField name="cc" value="${config.cc}" autocomplete="off" autofocus="" class="span11"/>
+                        </div>
+                    </div>
+                </g:if>
+
+                <g:if test="${config.bcc != null}">
+                    <div class="control-group">
+                        <label class="control-label"><g:message code="crmSendMail.bcc.label"/></label>
+
+                        <div class="controls">
+                            <g:textField name="bcc" value="${config.bcc}" autocomplete="off" autofocus=""
+                                         class="span11"/>
+                        </div>
+                    </div>
+                </g:if>
+
                 <div class="control-group">
                     <label class="control-label"><g:message code="crmSendMail.subject.label"/></label>
 

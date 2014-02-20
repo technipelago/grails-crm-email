@@ -81,7 +81,7 @@ class CrmEmailService {
     @Listener(namespace = 'crm', topic = 'sendMail')
     def sendMailListener(Map data) {
         sendMail {
-            if (data.body && data.html) {
+            if (data.attachments || (data.body && data.html)) {
                 multipart true
             }
             to data.to
@@ -100,6 +100,9 @@ class CrmEmailService {
             }
             if (data.html) {
                 html data.html
+            }
+            for(a in data.attachments) {
+                inline a.id, a.type, a.file
             }
         }
         event(for: 'crm', topic: 'mailSent', data: data)
