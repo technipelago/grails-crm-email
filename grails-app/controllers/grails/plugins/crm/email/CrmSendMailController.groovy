@@ -162,8 +162,11 @@ class CrmSendMailController {
 
         def file = params.file
 
-        if (file && !file.isEmpty()) {
-            config.attachments << new EmailAttachment(file)
+        if (file && file.isAvailable() && !file.isEmpty()) {
+            def tempFile = File.createTempFile("crm", "att")
+            tempFile.deleteOnExit()
+            file.transferTo(tempFile)
+            config.attachments << new EmailAttachment(tempFile, file.getOriginalFilename(), file.getContentType(), true)
         }
 
         render config.attachments as JSON
