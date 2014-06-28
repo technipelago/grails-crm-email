@@ -4,11 +4,12 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile
 import grails.plugins.crm.content.CrmResourceRef
 
 /**
- * Created by goran on 2014-06-28.
+ * Holder of email attachment.
  */
 class EmailAttachment implements Serializable {
     private CommonsMultipartFile multipartFile
     private String resourceId
+    private File file
 
     String name
     String contentType
@@ -29,6 +30,13 @@ class EmailAttachment implements Serializable {
         this.size = metadata.bytes
     }
 
+    EmailAttachment(File file, String contentType) {
+        this.file = file
+        this.name = file.name
+        this.contentType = contentType ?: "application/octet-stream"
+        this.size = file.length()
+    }
+
     def withInputStream(Closure work) {
         if(multipartFile) {
             InputStream inputStream = multipartFile.getInputStream()
@@ -42,6 +50,8 @@ class EmailAttachment implements Serializable {
             if(ref) {
                 return ref.withInputStream(work)
             }
+        } else if(file) {
+            file.withInputStream(work)
         }
         throw new IllegalStateException("No resource attached")
     }
