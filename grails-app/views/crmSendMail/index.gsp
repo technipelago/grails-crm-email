@@ -9,6 +9,18 @@
                 $.get("${createLink(controller: 'crmSendMail', action: 'template')}", {token: "${token}", name: name}, function(data) {
                     callback(data);
                 });
+            },
+            refreshFiles: function() {
+                $("#files").load("${createLink(controller: 'crmSendMail', action: 'attachments', id: token)}", function() {
+                    $("#attachments .crm-delete").click(function(ev) {
+                        ev.preventDefault();
+                        var $a = $(this).closest('a');
+                        var name = $a.data("crm-name");
+                        $.post("${createLink(action: 'delete')}", {id: "${token}", name: name}, function(data) {
+                            $a.remove();
+                        });
+                    });
+                });
             }
         };
 
@@ -19,8 +31,54 @@
                     $("#body").val(text);
                 });
             });
+
+            $("a.crm-file").click(function(ev) {
+                var id = $(this).data("crm-id");
+                var formData = new FormData();
+                formData.append('r', id);
+                $.ajax({
+                    url: "${createLink(controller: 'crmSendMail', action: 'attach', id: token)}",
+                    type: "POST",
+                    data: formData,
+                    dataType: 'json',
+                    //Options to tell jQuery not to process data or worry about content-type.
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data, status, xhr) {
+                        CRM.refreshFiles();
+                        $('#attachModal').modal('hide');
+                    }
+                });
+            });
+
+            $("#attachModal form").submit(function(ev) {
+                ev.preventDefault();
+                var formData = new FormData($(this)[0]);
+                $.ajax({
+                    url: "${createLink(controller: 'crmSendMail', action: 'upload', id: token)}",
+                    type: "POST",
+                    data: formData,
+                    dataType: 'json',
+                    //Options to tell jQuery not to process data or worry about content-type.
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function(data, status, xhr) {
+                        CRM.refreshFiles();
+                        $('#attachModal').modal('hide');
+                    }
+                });
+            });
+
+            CRM.refreshFiles();
         });
     </r:script>
+    <style type="text/css">
+    #attachments .btn {
+        margin-bottom: 5px;
+    }
+    </style>
 </head>
 
 <body>
@@ -40,7 +98,7 @@
                     <label class="control-label"><g:message code="crmSendMail.from.label"/></label>
 
                     <div class="controls">
-                        <g:select name="from" from="${senders}" value="${config.from}" class="span11"/>
+                        <g:select name="from" from="${senders}" value="${from}" class="span11"/>
                     </div>
                 </div>
 
@@ -48,7 +106,7 @@
                     <label class="control-label"><g:message code="crmSendMail.to.label"/></label>
 
                     <div class="controls">
-                        <g:textField name="to" value="${config.to}" autocomplete="off" autofocus="" class="span11"/>
+                        <g:textField name="to" value="${to}" autocomplete="off" autofocus="" class="span11"/>
                     </div>
                 </div>
 
@@ -57,7 +115,7 @@
                         <label class="control-label"><g:message code="crmSendMail.cc.label"/></label>
 
                         <div class="controls">
-                            <g:textField name="cc" value="${config.cc}" autocomplete="off" autofocus="" class="span11"/>
+                            <g:textField name="cc" value="${cc}" autocomplete="off" autofocus="" class="span11"/>
                         </div>
                     </div>
                 </g:if>
@@ -67,7 +125,7 @@
                         <label class="control-label"><g:message code="crmSendMail.bcc.label"/></label>
 
                         <div class="controls">
-                            <g:textField name="bcc" value="${config.bcc}" autocomplete="off" autofocus=""
+                            <g:textField name="bcc" value="${bcc}" autocomplete="off" autofocus=""
                                          class="span11"/>
                         </div>
                     </div>
@@ -77,7 +135,7 @@
                     <label class="control-label"><g:message code="crmSendMail.subject.label"/></label>
 
                     <div class="controls">
-                        <g:textField name="subject" value="${config.subject}" autocomplete="off" autofocus=""
+                        <g:textField name="subject" value="${subject}" autocomplete="off" autofocus=""
                                      class="span11"/>
                     </div>
                 </div>
@@ -86,7 +144,37 @@
                     <label class="control-label"><g:message code="crmSendMail.body.label"/></label>
 
                     <div class="controls">
-                        <g:textArea name="body" value="${config.body}" rows="8" class="span11"/>
+                        <g:textArea name="body" value="${body}" rows="8" class="span11"/>
+                    </div>
+                </div>
+            </div>
+
+            <div id="attachments" class="control-group">
+                <label class="control-label"><g:message code="crmSendMail.attachments.label"/></label>
+
+                <div class="controls">
+                    <span id="files">
+                        <tmpl:attachments list="${attachments}"/>
+                    </span>
+
+                    <div class="btn-group">
+                        <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="icon icon-folder-open icon-white"></i>
+                            Välj
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <g:each in="${files}" var="file">
+                                <li>
+                                    <a href="#" data-crm-id="${file.id}" class="crm-file">
+                                        ${file.title.encodeAsHTML()}
+                                    </a>
+                                </li>
+                            </g:each>
+                            <li>
+                                <a href="#attachModal" data-toggle="modal">Ladda upp...</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -116,6 +204,31 @@
     </div>
 
 </g:form>
+
+<div id="attachModal" class="modal hide fade" tabindex="-1" role="dialog"
+     aria-labelledby="attachModalLabel" aria-hidden="true">
+    <g:uploadForm action="attach" id="${token}">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+
+            <h3 id="attachModalLabel">Bifoga fil</h3>
+        </div>
+
+        <div class="modal-body row-fluid">
+            <p>
+                Här kan du välja en fil som du lagrat på din dator och bifoga den i e-postmeddelandet.
+            </p>
+
+            <input type="file" name="file"/>
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Ladda upp</button>
+            <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Avbryt</button>
+        </div>
+    </g:uploadForm>
+</div>
 
 </body>
 </html>

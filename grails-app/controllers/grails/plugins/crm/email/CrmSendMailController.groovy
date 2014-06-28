@@ -16,14 +16,21 @@
 
 package grails.plugins.crm.email
 
+import grails.converters.JSON
+
 import javax.servlet.http.HttpServletResponse
+
+import grails.plugins.crm.core.TenantUtils
 
 /**
  * Send email controller.
  */
 class CrmSendMailController {
 
+    static allowedMethods = [attach: 'POST', upload: 'POST']
+
     def crmCoreService
+    def crmContentService
     def crmEmailService
 
     def index() {
@@ -50,8 +57,9 @@ class CrmSendMailController {
             redirect uri: (config.referer - request.contextPath)
         } else {
             def reference = config.reference ? crmCoreService.getReference(config.reference) : null
-            [token: token, config: config, ref: config.reference, reference: reference, referer: config.referer,
-                    senders: config.senders, templates: config.templates]
+            [token  : token, config: config, ref: config.reference, reference: reference, referer: config.referer,
+             senders: config.senders, templates: config.templates, attachments: config.attachments, files: config.files] +
+                    config.subMap(['from', 'to', 'cc', 'bcc', 'subject', 'body'])
         }
     }
 
@@ -86,15 +94,106 @@ class CrmSendMailController {
             result = event(for: namespace, topic: topic, data: eventData, fork: false)?.value
         } catch (Throwable e) {
             log.error(e)
-            while(e.getCause() != null) {
+            while (e.getCause() != null) {
                 e = e.getCause()
                 result = e.getMessage()
-                if(result) {
+                if (result) {
                     break
                 }
             }
         }
 
         render result.toString()
+    }
+
+    /**
+     * Attach existing CRM content.
+     *
+     * @param r
+     * @return
+     */
+    def attach(Long r) {
+        def token = params.token ?: params.id
+        def config = crmEmailService.getSendMailConfiguration(request, token)
+        if (!config) {
+            log.error("Email configuration [$token] not found")
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+
+        if (!config.attachments) {
+            config.attachments = []
+        }
+
+        def crmResourceRef = crmContentService.getResourceRef(r)
+        if(! crmResourceRef) {
+            log.error("Resource [$r] not found in tenant [$tenant]")
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+        def tenant = TenantUtils.tenant
+        if(crmResourceRef.tenantId != tenant) {
+            log.error("Illegal access to resource [$r] in tenant [$tenant]")
+            response.sendError(HttpServletResponse.SC_FORBIDDEN)
+            return
+        }
+        config.attachments << new EmailAttachment(crmResourceRef)
+
+        render config.attachments as JSON
+    }
+
+    /**
+     * Upload a client file.
+     *
+     * @return
+     */
+    def upload() {
+        def token = params.token ?: params.id
+        def config = crmEmailService.getSendMailConfiguration(request, token)
+        if (!config) {
+            log.error("Email configuration [$token] not found")
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+
+        if (!config.attachments) {
+            config.attachments = []
+        }
+
+        def file = params.file
+
+        if (file && !file.isEmpty()) {
+            config.attachments << new EmailAttachment(file)
+        }
+
+        render config.attachments as JSON
+    }
+
+    def attachments() {
+        def token = params.token ?: params.id
+        def config = crmEmailService.getSendMailConfiguration(request, token)
+        if (!config) {
+            log.error("Email configuration [$token] not found")
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+        render template: 'attachments', model: [list: config.attachments ?: []]
+    }
+
+    def delete(String id, String name) {
+        def config = crmEmailService.getSendMailConfiguration(request, id)
+        if (!config) {
+            log.error("Email configuration [$id] not found")
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
+        }
+
+        if (config.attachments) {
+            def file = config.attachments.find { it.name == name }
+            if (file) {
+                config.attachments.remove(file)
+            }
+        }
+        render config.attachments as JSON
     }
 }
