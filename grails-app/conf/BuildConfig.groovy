@@ -30,6 +30,6 @@ grails.project.dependency.resolution = {
 
         compile "grails.crm:crm-core:latest.integration"
 
-        runtime ":mail:1.0.1"
+        runtime ":mail:1.0.3"
     }
 }
