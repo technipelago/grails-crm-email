@@ -16,8 +16,6 @@
 
 package grails.plugins.crm.email
 
-import grails.events.Listener
-
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
@@ -78,8 +76,7 @@ class CrmEmailService {
     }
 
 
-    @Listener(namespace = 'crm', topic = 'sendMail')
-    def sendMailListener(Map data) {
+    def sendMailBySpec(Map data) {
         sendMail {
             if (data.attachments || (data.body && data.html)) {
                 multipart true
@@ -101,8 +98,10 @@ class CrmEmailService {
             if (data.html) {
                 html data.html
             }
-            for(a in data.attachments) {
-                inline a.id, a.type, a.file
+            for (a in data.attachments) {
+                def tmp = new ByteArrayOutputStream()
+                a.withInputStream { is -> tmp << is }
+                attachBytes a.name, a.contentType, tmp.toByteArray()
             }
         }
         event(for: 'crm', topic: 'mailSent', data: data)
