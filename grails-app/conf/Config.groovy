@@ -22,3 +22,13 @@ log4j = {
 
     warn   'org.mortbay.log'
 }
+
+environments {
+    production {
+        greenmail.disabled = true
+    }
+    test {
+        grails.mail.host = "localhost"
+        grails.mail.port = com.icegreen.greenmail.util.ServerSetupTest.SMTP.port
+    }
+}
