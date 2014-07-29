@@ -160,7 +160,7 @@
                     <div class="btn-group">
                         <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="icon icon-folder-open icon-white"></i>
-                            Välj
+                            <g:message code="crmSendMail.button.attachment.select.label" default="Select"/>
                             <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
@@ -172,7 +172,9 @@
                                 </li>
                             </g:each>
                             <li>
-                                <a href="#attachModal" data-toggle="modal">Ladda upp...</a>
+                                <a href="#attachModal" data-toggle="modal">
+                                    <g:message code="crmSendMail.button.attachment.upload.label" default="Upload..."/>
+                                </a>
                             </li>
                         </ul>
                     </div>
