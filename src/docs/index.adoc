@@ -1,0 +1,73 @@
+= GR8 CRM - Email Plugin
+Göran Ehrsson <goran@technipelago.se>
+:toc:
+:numbered:
+:icons: font
+:imagesdir: ./images
+:source-highlighter: prettify
+:homepage: http://gr8crm.github.io
+:gr8crm: GR8 CRM
+:gr8source: https://github.com/technipelago/grails-crm-email
+:license: This plugin is licensed with http://www.apache.org/licenses/LICENSE-2.0.html[Apache License version 2.0]
+
+== Introduction
+
+{gr8crm} is a set of http://www.grails.org/[Grails Web Application Framework]
+plugins that makes it easy to develop web applications with CRM functionality.
+
+You can find more information about {gr8crm} on the main documentation site {homepage}.
+
+=== Customer relationship management
+Customer relationship management (CRM) is a system for managing a company’s interactions with current and future customers.
+It involves using technology to organize, automate and synchronize sales, marketing, customer service, and technical support.
+http://en.wikipedia.org/wiki/Customer_relationship_management[Wikipedia]
+
+The {gr8crm} "Ecosystem" currently contains over 40 Grails plugins. For a complete list of plugins see {homepage}.
+
+Each {gr8crm} plugin defines a http://martinfowler.com/bliki/BoundedContext.html[Bounded Context]
+that focus on one specific domain, for example *contact*, *project* or *document*.
+
+== CRM Email Plugin
+
+This {gr8crm} plugin provides services, controllers and views for sending emails in a {gr8crm} application.
+
+== CrmEmailService
+
+=== Send email
+
+To send an email with the +crm-email+ plugin you create a configuration and pass it to the mail composer page.
+The composer page uses the configuration to initialize fields, templates and attachments.
+
++String prepareForSendMail(HttpServletRequest request, Map params)+
+
+[source,groovy]
+.MyOrderController.groovy
+----
+def sendmail(Long id) {
+    def contact = crmContactService.getContact(id) // <1>
+    def user = crmSecurityService.getUserInfo()    // <2>
+    def token = crmEmailService.prepareForSendMail(request, [
+        tenant : TenantUtils.tenant,
+        user   : user,
+        referer: createLink(action: "show", id: id),
+        senders: ["${user.name} <${user.email}>", "My Company Inc. <info@mycompany.com>"],
+        from   : "${user.name} <${user.email}>",
+        to     : "${contact.name} <${contact.email}>",
+        subject: "Order Confirmation",
+        body   : "Hi $contact, I'm pleased to let you know that your order has been confirmed."
+    ]) // <3>
+    redirect mapping: 'crm-mail-send', id: token // <4>
+}
+----
+<1> In this example we lookup a customer (contact) that we want to send email to
+<2> The current user will be the sender
+<3> This creates an email configuration that are stored in the user's session
+<4> Redirect to the generic sendmail page, there the user can finish the message and send it
+
+== License
+
+{license}
+
+== Source Code
+
+The source code for this plugin is available at {gr8source}

@@ -13,3 +13,7 @@ With CRM we mean features like:
 ## Email Plugin
 
 This GR8 CRM plugin provides services, controllers and views for sending email in an application.
+
+### Documentation
+
+Complete documentation for this plugin can be found at [gr8crm.github.io](http://gr8crm.github.io/plugins/crm-email/)
