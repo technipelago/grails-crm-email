@@ -35,8 +35,8 @@ This {gr8crm} plugin provides services, controllers and views for sending emails
 
 === Send email
 
-To send an email with the +crm-email+ plugin you create a configuration and pass it to the mail composer page.
-The composer page uses the configuration to initialize fields, templates and attachments.
+To send an email with the +crm-email+ plugin you create a configuration and pass it to the mail composition page.
+The composition page uses the configuration to initialize fields, templates and attachments.
 
 +String prepareForSendMail(HttpServletRequest request, Map params)+
 
@@ -63,6 +63,9 @@ def sendmail(Long id) {
 <2> The current user will be the sender
 <3> This creates an email configuration that are stored in the user's session
 <4> Redirect to the generic sendmail page, there the user can finish the message and send it
+
+.Email composition page
+image::email-compose.png[Email composition page, role="thumb"]
 
 == License
 
