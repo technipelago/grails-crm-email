@@ -1,15 +1,13 @@
-grails.project.work.dir = "target"
+grails.project.class.dir = "target/classes"
+grails.project.test.class.dir = "target/test-classes"
+grails.project.test.reports.dir = "target/test-reports"
 grails.project.target.level = 1.6
-
-grails.project.repos.default = "crm"
 
 grails.project.dependency.resolution = {
     inherits("global") {}
     log "warn"
     legacyResolve false
     repositories {
-        grailsHome()
-        mavenRepo "http://labs.technipelago.se/repo/crm-releases-local/"
         grailsCentral()
         mavenCentral()
     }
@@ -30,8 +28,8 @@ grails.project.dependency.resolution = {
         test(":greenmail:1.3.4") {
             export = false
         }
-        compile "grails.crm:crm-core:latest.integration"
-        compile "grails.crm:crm-content:latest.integration"
+        compile ":crm-core:2.0.0"
+        compile ":crm-content:2.0.0"
 
         compile ":mail:1.0.6"
     }
