@@ -27,7 +27,7 @@ class CrmEmailGrailsPlugin {
     def author = "Goran Ehrsson"
     def authorEmail = "goran@technipelago.se"
     def description = '''\
-        This GR8 CRM plugin provides services, controllers and views for sending email in an application.
+        This plugin provides services, controllers and views for sending email in a GR8 CRM application.
         '''
     def documentation = "http://gr8crm.github.io/plugins/crm-i18n/"
     def license = "APACHE"
