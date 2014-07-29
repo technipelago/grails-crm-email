@@ -173,7 +173,7 @@
                             </g:each>
                             <li>
                                 <a href="#attachModal" data-toggle="modal">
-                                    <g:message code="crmSendMail.button.attachment.upload.label" default="Upload..."/>
+                                    <g:message code="crmSendMail.attachment.upload.label" default="Upload..."/>
                                 </a>
                             </li>
                         </ul>
@@ -213,12 +213,14 @@
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 
-            <h3 id="attachModalLabel">Bifoga fil</h3>
+            <h3 id="attachModalLabel">
+                <g:message code="crmSendMail.attach.title"/>
+            </h3>
         </div>
 
         <div class="modal-body row-fluid">
             <p>
-                Här kan du välja en fil som du lagrat på din dator och bifoga den i e-postmeddelandet.
+                <g:message code="crmSendMail.attach.help"/>
             </p>
 
             <input type="file" name="file"/>
@@ -226,8 +228,8 @@
         </div>
 
         <div class="modal-footer">
-            <button type="submit" class="btn btn-success">Ladda upp</button>
-            <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Avbryt</button>
+            <button type="submit" class="btn btn-success"><g:message code="crmSendMail.button.attachment.upload.label"/></button>
+            <button type="button" class="btn" data-dismiss="modal" aria-hidden="true"><g:message code="crmSendMail.button.cancel.label"/></button>
         </div>
     </g:uploadForm>
 </div>
