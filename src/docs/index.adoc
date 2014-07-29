@@ -35,10 +35,10 @@ This {gr8crm} plugin provides services, controllers and views for sending emails
 
 === Send email
 
++String prepareForSendMail(HttpServletRequest request, Map params)+
+
 To send an email with the +crm-email+ plugin you create a configuration and pass it to the mail composition page.
 The composition page uses the configuration to initialize fields, templates and attachments.
-
-+String prepareForSendMail(HttpServletRequest request, Map params)+
 
 [source,groovy]
 .MyOrderController.groovy
@@ -61,7 +61,7 @@ def sendmail(Long id) {
 ----
 <1> In this example we lookup a customer (contact) that we want to send email to
 <2> The current user will be the sender
-<3> This creates an email configuration that are stored in the user's session
+<3> This creates an email configuration that is stored in the user's session
 <4> Redirect to the generic sendmail page, there the user can finish the message and send it
 
 .Email composition page
