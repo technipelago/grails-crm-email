@@ -23,13 +23,13 @@ class CrmEmailGrailsPlugin {
     def pluginExcludes = [
             "grails-app/views/error.gsp"
     ]
-    def title = "GR8 CRM Email Plugin"
+    def title = "GR8 CRM Email Composition Plugin"
     def author = "Goran Ehrsson"
     def authorEmail = "goran@technipelago.se"
     def description = '''\
         This plugin provides services, controllers and views for sending email in a GR8 CRM application.
         '''
-    def documentation = "http://gr8crm.github.io/plugins/crm-i18n/"
+    def documentation = "http://gr8crm.github.io/plugins/crm-email/"
     def license = "APACHE"
     def organization = [name: "Technipelago AB", url: "http://www.technipelago.se/"]
     def issueManagement = [system: "github", url: "https://github.com/technipelago/grails-crm-email/issues"]
