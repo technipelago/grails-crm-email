@@ -1,4 +1,4 @@
-= GR8 CRM - Email Plugin
+= GR8 CRM - Email Composition Plugin
 Göran Ehrsson <goran@technipelago.se>
 :toc:
 :numbered:
@@ -27,7 +27,7 @@ The {gr8crm} "Ecosystem" currently contains over 40 Grails plugins. For a comple
 Each {gr8crm} plugin defines a http://martinfowler.com/bliki/BoundedContext.html[Bounded Context]
 that focus on one specific domain, for example *contact*, *project* or *document*.
 
-== CRM Email Plugin
+== Email Composition Plugin
 
 This {gr8crm} plugin provides services, controllers and views for sending emails in a {gr8crm} application.
 
