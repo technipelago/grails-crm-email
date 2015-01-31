@@ -28,8 +28,8 @@ grails.project.dependency.resolution = {
         test(":greenmail:1.3.4") {
             export = false
         }
-        compile ":crm-core:2.0.0"
-        compile ":crm-content:2.0.0"
+        compile ":crm-core:2.0.2"
+        compile ":crm-content:2.0.3"
 
         compile ":mail:1.0.7"
     }
