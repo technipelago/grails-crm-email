@@ -29,7 +29,9 @@ that focus on one specific domain, for example *contact*, *project* or *document
 
 == Email Composition Plugin
 
-This {gr8crm} plugin provides services, controllers and views for sending emails in a {gr8crm} application.
+This {gr8crm} plugin provides services, controllers and views for composing and sending emails in a {gr8crm} application.
+The email composition screen can display a list of FreeMarker templates that can be selected to quickly compose standard emails.
+Attachments are also supported, both uploaded local files and files stored in the application by the link:../crm-content/index.html[crm-content] plugin.
 
 == CrmEmailService
 
@@ -37,7 +39,7 @@ This {gr8crm} plugin provides services, controllers and views for sending emails
 
 +String prepareForSendMail(HttpServletRequest request, Map params)+
 
-To send an email with the +crm-email+ plugin you create a configuration and pass it to the mail composition page.
+To send an email with the +crm-email+ plugin you create a *send configuration* and pass it to the mail composition page.
 The composition page uses the configuration to initialize fields, templates and attachments.
 
 [source,groovy]
@@ -67,6 +69,48 @@ def sendmail(Long id) {
 .Email composition page
 image::email-compose.png[Email composition page, role="thumb"]
 
+==== Multiple recipients
+
+The above code example opens the email composition screen and send the email to *one* recipient.
+Combined with the http://grails.org/plugin/selection[selection] plugin we can compose an email the same way
+and send to a *group of recipients*.
+
+It works like this: The user searches for a group of recipients using a standard query form. When the result page is displayed
+with the matching list of recipients, the user clicks a button to invoke the email composition screen to send to the group.
+
+You must have a controller action that prepares a *send configuration* then redirects to the email composition screen.
+You store the last executed query (encoded as a URI) in the send configuration (key=selection).
+The query will be re-executed by `CrmEmailService` and each recipient will receive an individual copy of the email.
+
+[source,groovy]
+.MyOrderController.groovy
+----
+def sendmail() {
+    def selection = params.getSelectionURI() // <1>
+    def user = crmSecurityService.getUserInfo()    // <2>
+    def token = crmEmailService.prepareForSendMail(request, [
+        tenant   : TenantUtils.tenant,
+        user     : user,
+        referer  : createLink(action: "index"),
+        senders  : ["${user.name} <${user.email}>", "My Company Inc. <info@mycompany.com>"],
+        from     : "${user.name} <${user.email}>",
+        selection: selection,
+        subject  : "GR8 CRM News",
+        body     : "Hi $m, I'm pleased to let you know that the crm-email plugin now can send to a group of recipients."
+    ]) // <3>
+    redirect mapping: 'crm-mail-send', id: token // <4>
+}
+----
+<1> When using the selection plugin we can get the last executed query encoded as a URI
+<2> The current user will be the sender
+<3> This creates an email configuration that is stored in the user's session
+<4> Redirect to the generic sendmail page, there the user can finish the message and send it to all people in the collection/selection
+
+== Changes
+
+2.0.1:: Added support for sending to multiple recipients using the `selection` plugin.
+2.0.0:: First public release
+
 == License
 
 {license}
@@ -74,3 +118,9 @@ image::email-compose.png[Email composition page, role="thumb"]
 == Source Code
 
 The source code for this plugin is available at {gr8source}
+
+== Contributing
+
+Please report {gr8source}/issues[issues or suggestions].
+
+Want to improve the plugin: Fork the {gr8source}[repository] and send a pull request.
