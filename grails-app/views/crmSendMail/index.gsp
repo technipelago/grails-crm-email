@@ -155,7 +155,7 @@
                     <label class="control-label"><g:message code="crmSendMail.body.label"/></label>
 
                     <div class="controls">
-                        <g:textArea name="body" value="${body}" rows="8" class="span11"/>
+                        <g:textArea name="body" value="${body}" rows="10" class="span11"/>
                     </div>
                 </div>
             </div>
