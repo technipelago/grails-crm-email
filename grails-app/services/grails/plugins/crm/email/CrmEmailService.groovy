@@ -66,6 +66,11 @@ class CrmEmailService {
             return false
         }
 
+        def config = getSendMailConfiguration(request, token)
+        if (config?.attachments) {
+            deleteAttachment(config.attachments, null)
+        }
+
         def obj = session.getAttribute(TOKEN_PREFIX + token)
         if (obj != null) {
             session.removeAttribute(TOKEN_PREFIX + token)
@@ -75,6 +80,22 @@ class CrmEmailService {
         return false
     }
 
+    /*
+     * Cleanup temporary files.
+     */
+    boolean deleteAttachment(final List<EmailAttachment> attachments, final String name) {
+        boolean removed = false
+        Iterator<EmailAttachment> itor = attachments.iterator()
+        while (itor.hasNext()) {
+            EmailAttachment a = itor.next()
+            if (name == null || name == a.name) {
+                a.cleanup()
+                itor.remove()
+                removed = true
+            }
+        }
+        removed
+    }
 
     def sendMailBySpec(Map data) {
         sendMail {

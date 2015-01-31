@@ -49,16 +49,17 @@ class CrmSendMailController {
             eventData.putAll(config)
             eventData.putAll(params.subMap(['from', 'to', 'subject', 'body']))
             try {
-                event(for: namespace, topic: topic, data: eventData)
+                event(for: namespace, topic: topic, data: eventData, fork: false)
             } finally {
                 crmEmailService.removeSendMailConfiguration(request, token)
             }
-            flash.success = message(code: config.sentMessage ?: 'crmSendMail.sent.message', args: [params.to])
+            flash.success = message(code: config.sentMessage ?: 'crmSendMail.sent.message', args: [params.to ?: 'recipients'])
             redirect uri: (config.referer - request.contextPath)
         } else {
             def reference = config.reference ? crmCoreService.getReference(config.reference) : null
-            [token  : token, config: config, ref: config.reference, reference: reference, referer: config.referer,
-             senders: config.senders, templates: config.templates, attachments: config.attachments, files: config.files] +
+            [token    : token, config: config, ref: config.reference, reference: reference,
+             selection: config.selection, referer: config.referer,
+             senders  : config.senders, templates: config.templates, attachments: config.attachments, files: config.files] +
                     config.subMap(['from', 'to', 'cc', 'bcc', 'subject', 'body'])
         }
     }
@@ -125,14 +126,14 @@ class CrmSendMailController {
             config.attachments = []
         }
 
+        def tenant = TenantUtils.tenant
         def crmResourceRef = crmContentService.getResourceRef(r)
-        if(! crmResourceRef) {
+        if (!crmResourceRef) {
             log.error("Resource [$r] not found in tenant [$tenant]")
             response.sendError(HttpServletResponse.SC_NOT_FOUND)
             return
         }
-        def tenant = TenantUtils.tenant
-        if(crmResourceRef.tenantId != tenant) {
+        if (crmResourceRef.tenantId != tenant) {
             log.error("Illegal access to resource [$r] in tenant [$tenant]")
             response.sendError(HttpServletResponse.SC_FORBIDDEN)
             return
@@ -183,6 +184,13 @@ class CrmSendMailController {
         render template: 'attachments', model: [list: config.attachments ?: []]
     }
 
+    /**
+     * Delete attachments in an email configuration.
+     *
+     * @param id configuration token
+     * @param name attachment name or null to delete all attachments
+     * @return JSON Array with remaining attachments
+     */
     def delete(String id, String name) {
         def config = crmEmailService.getSendMailConfiguration(request, id)
         if (!config) {
@@ -191,12 +199,8 @@ class CrmSendMailController {
             return
         }
 
-        if (config.attachments) {
-            def file = config.attachments.find { it.name == name }
-            if (file) {
-                config.attachments.remove(file)
-            }
-        }
+        crmEmailService.deleteAttachment(config.attachments, name)
+
         render config.attachments as JSON
     }
 }

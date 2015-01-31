@@ -53,12 +53,7 @@ class EmailAttachment implements Serializable {
                 return ref.withInputStream(work)
             }
         } else if(file) {
-            try {
-                return file.withInputStream(work)
-            } finally {
-                cleanup()
-            }
-
+            return file.withInputStream(work)
         }
         throw new IllegalStateException("No resource attached")
     }
