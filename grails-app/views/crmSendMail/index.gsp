@@ -27,8 +27,13 @@
         $(document).ready(function() {
             $("#template-selector a").click(function(ev) {
                 ev.preventDefault();
+                var title = $(this).text().trim();
                 CRM.selectEmailTemplate($(this).data('name'), function(text) {
                     $("#body").val(text);
+                    var subjectField = $('#subject');
+                    if(! subjectField.val().trim()) {
+                        subjectField.val(title);
+                    }
                 });
             });
 
@@ -104,10 +109,16 @@
 
                 <div class="control-group">
                     <label class="control-label"><g:message code="crmSendMail.to.label"/></label>
-
-                    <div class="controls">
-                        <g:textField name="to" value="${to}" autocomplete="off" autofocus="" class="span11"/>
-                    </div>
+                    <g:if test="${selection}">
+                        <div class="controls">
+                            &laquo; Flera mottagare &raquo;
+                        </div>
+                    </g:if>
+                    <g:else>
+                        <div class="controls">
+                            <g:textField name="to" value="${to}" autocomplete="off" autofocus="" class="span11"/>
+                        </div>
+                    </g:else>
                 </div>
 
                 <g:if test="${config.cc != null}">
@@ -228,8 +239,10 @@
         </div>
 
         <div class="modal-footer">
-            <button type="submit" class="btn btn-success"><g:message code="crmSendMail.button.attachment.upload.label"/></button>
-            <button type="button" class="btn" data-dismiss="modal" aria-hidden="true"><g:message code="crmSendMail.button.cancel.label"/></button>
+            <button type="submit" class="btn btn-success"><g:message
+                    code="crmSendMail.button.attachment.upload.label"/></button>
+            <button type="button" class="btn" data-dismiss="modal" aria-hidden="true"><g:message
+                    code="crmSendMail.button.cancel.label"/></button>
         </div>
     </g:uploadForm>
 </div>
