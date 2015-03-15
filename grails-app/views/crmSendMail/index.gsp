@@ -88,7 +88,7 @@
 
 <body>
 
-<g:form>
+<g:form action="send">
 
     <g:hiddenField name="token" value="${token}"/>
 
@@ -193,7 +193,7 @@
             </div>
 
             <div class="form-actions">
-                <crm:button action="index" label="crmSendMail.button.send.label" visual="success"
+                <crm:button action="send" label="crmSendMail.button.send.label" visual="success"
                             icon="icon-envelope icon-white"/>
                 <crm:button action="cancel" label="crmSendMail.button.cancel.label" icon="icon-remove"/>
             </div>

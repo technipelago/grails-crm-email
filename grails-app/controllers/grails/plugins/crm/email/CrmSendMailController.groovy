@@ -27,7 +27,7 @@ import grails.plugins.crm.core.TenantUtils
  */
 class CrmSendMailController {
 
-    static allowedMethods = [attach: 'POST', upload: 'POST']
+    static allowedMethods = [send: 'POST', attach: 'POST', upload: 'POST']
 
     def crmCoreService
     def crmContentService
@@ -42,26 +42,34 @@ class CrmSendMailController {
             return
         }
 
-        if (request.post) {
-            def namespace = config.namespace ?: 'crm'
-            def topic = config.topic ?: 'sendMail'
-            def eventData = [:]
-            eventData.putAll(config)
-            eventData.putAll(params.subMap(['from', 'to', 'subject', 'body']))
-            try {
-                event(for: namespace, topic: topic, data: eventData, fork: false)
-            } finally {
-                crmEmailService.removeSendMailConfiguration(request, token)
-            }
-            flash.success = message(code: config.sentMessage ?: 'crmSendMail.sent.message', args: [params.to ?: 'recipients'])
-            redirect uri: (config.referer - request.contextPath)
-        } else {
-            def reference = config.reference ? crmCoreService.getReference(config.reference) : null
-            [token    : token, config: config, ref: config.reference, reference: reference,
-             selection: config.selection, referer: config.referer,
-             senders  : config.senders, templates: config.templates, attachments: config.attachments, files: config.files] +
-                    config.subMap(['from', 'to', 'cc', 'bcc', 'subject', 'body'])
+        def reference = config.reference ? crmCoreService.getReference(config.reference) : null
+        [token    : token, config: config, ref: config.reference, reference: reference,
+         selection: config.selection, referer: config.referer,
+         senders  : config.senders, templates: config.templates, attachments: config.attachments, files: config.files] +
+                config.subMap(['from', 'to', 'cc', 'bcc', 'subject', 'body'])
+
+    }
+
+    def send() {
+        def token = params.token ?: params.id
+        def config = crmEmailService.getSendMailConfiguration(request, token)
+        if (!config) {
+            log.error("Email configuration [$token] not found")
+            response.sendError(HttpServletResponse.SC_NOT_FOUND)
+            return
         }
+        def namespace = config.namespace ?: 'crm'
+        def topic = config.topic ?: 'sendMail'
+        def eventData = [:]
+        eventData.putAll(config)
+        eventData.putAll(params.subMap(['from', 'to', 'subject', 'body']))
+        try {
+            event(for: namespace, topic: topic, data: eventData, fork: false)
+        } finally {
+            crmEmailService.removeSendMailConfiguration(request, token)
+        }
+        flash.success = message(code: config.sentMessage ?: 'crmSendMail.sent.message', args: [params.to ?: 'recipients'])
+        redirect uri: (config.referer - request.contextPath)
     }
 
     def cancel() {
