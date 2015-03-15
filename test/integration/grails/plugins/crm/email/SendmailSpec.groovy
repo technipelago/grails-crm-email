@@ -6,7 +6,7 @@ import org.springframework.mock.web.MockHttpSession
 /**
  * Test mail configuration.
  */
-class SendmailSpec extends grails.plugin.spock.IntegrationSpec {
+class SendmailSpec extends grails.test.spock.IntegrationSpec {
 
     def crmEmailService
     def greenMail

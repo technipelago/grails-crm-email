@@ -108,6 +108,7 @@ def sendmail() {
 
 == Changes
 
+2.4.0:: First version compatible with Grails 2.4.4
 2.0.1:: Added support for sending to multiple recipients using the `selection` plugin.
 2.0.0:: First public release
 
