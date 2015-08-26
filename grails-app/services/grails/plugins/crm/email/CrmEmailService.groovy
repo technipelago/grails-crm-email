@@ -99,7 +99,7 @@ class CrmEmailService {
 
     def sendMailBySpec(Map data) {
         sendMail {
-            if (data.attachments || (data.body && data.html)) {
+            if (data.attachments || data.inline || (data.body && data.html)) {
                 multipart true
             }
             to data.to
@@ -110,6 +110,9 @@ class CrmEmailService {
             if (data.bcc) {
                 bcc data.bcc
             }
+            if (data.replyTo) {
+                replyTo data.replyTo
+            }
             if (data.subject) {
                 subject data.subject
             }
@@ -118,6 +121,11 @@ class CrmEmailService {
             }
             if (data.html) {
                 html data.html
+            }
+            for (a in data.inline) {
+                def tmp = new ByteArrayOutputStream()
+                a.withInputStream { is -> tmp << is }
+                inline a.name, a.contentType, tmp.toByteArray()
             }
             for (a in data.attachments) {
                 def tmp = new ByteArrayOutputStream()
