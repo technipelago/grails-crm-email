@@ -5,7 +5,7 @@ grails.project.target.level = 1.6
 
 grails.project.fork = [
     //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
-    test: false,
+    test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
     run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
     war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
     console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
@@ -45,7 +45,6 @@ grails.project.dependency.resolution = {
 
         compile ":mail:1.0.7"
 
-        compile ":crm-core:2.4.0"
-        compile ":crm-content:2.4.0"
+        compile ":crm-content:2.4.2"
     }
 }

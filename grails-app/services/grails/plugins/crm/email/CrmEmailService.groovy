@@ -98,8 +98,11 @@ class CrmEmailService {
     }
 
     def sendMailBySpec(Map data) {
+        def inlines = data.inlines ?: data.inline
+        def attachments = data.attachments ?: data.attachment
+
         sendMail {
-            if (data.attachments || data.inline || (data.body && data.html)) {
+            if (attachments || inlines || (data.body && data.html)) {
                 multipart true
             }
             to data.to
@@ -122,15 +125,25 @@ class CrmEmailService {
             if (data.html) {
                 html data.html
             }
-            for (a in data.inline) {
-                def tmp = new ByteArrayOutputStream()
-                a.withInputStream { is -> tmp << is }
-                inline a.name, a.contentType, tmp.toByteArray()
+            if(inlines) {
+                if(inlines instanceof Map) {
+                    inlines = [inline]
+                }
+                for (a in inlines) {
+                    def tmp = new ByteArrayOutputStream()
+                    a.withInputStream { is -> tmp << is }
+                    inline a.name, a.contentType, tmp.toByteArray()
+                }
             }
-            for (a in data.attachments) {
-                def tmp = new ByteArrayOutputStream()
-                a.withInputStream { is -> tmp << is }
-                attachBytes a.name, a.contentType, tmp.toByteArray()
+            if(attachments) {
+                if(attachments instanceof Map) {
+                    attachments = [attachments]
+                }
+                for (a in attachments) {
+                    def tmp = new ByteArrayOutputStream()
+                    a.withInputStream { is -> tmp << is }
+                    attachBytes a.name, a.contentType, tmp.toByteArray()
+                }
             }
         }
         event(for: 'crm', topic: 'mailSent', data: data)

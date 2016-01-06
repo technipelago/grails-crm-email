@@ -16,12 +16,13 @@
 
 class CrmEmailGrailsPlugin {
     def groupId = ""
-    def version = "2.4.1-SNAPSHOT"
+    def version = "2.4.1"
     def grailsVersion = "2.2 > *"
     def dependsOn = [:]
     def loadAfter = ['crmCore']
     def pluginExcludes = [
-            "grails-app/views/error.gsp"
+            "grails-app/views/error.gsp",
+            "web-app/images/test-image.png"
     ]
     def title = "GR8 CRM Email Composition Plugin"
     def author = "Goran Ehrsson"
