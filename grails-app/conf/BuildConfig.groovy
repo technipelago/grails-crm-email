@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
             export = false
         }
 
-        test(":codenarc:0.22") { export = false }
+        test(":codenarc:0.24.1") { export = false }
         test(":code-coverage:2.0.3-3") { export = false }
 
         test(":greenmail:1.3.4") {
@@ -46,5 +46,14 @@ grails.project.dependency.resolution = {
         compile ":mail:1.0.7"
 
         compile ":crm-content:2.4.2"
+    }
+}
+
+codenarc.reports = {
+    xmlReport('xml') {
+        outputFile = 'target/CodeNarcReport.xml'
+    }
+    htmlReport('html') {
+        outputFile = 'target/CodeNarcReport.html'
     }
 }
