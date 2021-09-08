@@ -63,6 +63,7 @@ class CrmSendMailController {
         def eventData = [:]
         eventData.putAll(config)
         eventData.putAll(params.subMap(['from', 'to', 'subject', 'body']))
+        eventData.transport = params.transport ?: 'email'
         try {
             event(for: namespace, topic: topic, data: eventData, fork: false)
         } finally {

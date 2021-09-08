@@ -100,6 +100,22 @@
             <div class="row-fluid">
 
                 <div class="control-group">
+                    <label class="control-label"><g:message code="crmSendMail.transport.label"/></label>
+
+                    <div class="controls">
+                        <label class="radio">
+                            <g:radio name="transport" value="email" checked="${true}"/> <g:message code="crmSendMail.transport.email"/>
+                        </label>
+                    </div>
+                    <div class="controls">
+                        <label class="radio">
+                            <g:radio name="transport" value="sms"/> <g:message code="crmSendMail.transport.sms"/>
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="control-group">
                     <label class="control-label"><g:message code="crmSendMail.from.label"/></label>
 
                     <div class="controls">
@@ -191,6 +207,10 @@
                     </div>
                 </div>
             </div>
+
+            <p>
+                <g:message code="crmSendMail.attachments.sms.warning"/>
+            </p>
 
             <div class="form-actions">
                 <crm:button action="send" label="crmSendMail.button.send.label" visual="success"
