@@ -45,7 +45,7 @@ grails.project.dependency.resolution = {
 
         compile ":mail:1.0.7"
 
-        compile ":crm-content:2.5.0"
+        compile ":crm-content:2.5.1"
     }
 }
 
